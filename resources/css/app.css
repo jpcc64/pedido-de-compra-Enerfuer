@@ -1,0 +1,6 @@
+@import "tailwindcss";
+.form-input {
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    appearance: none;
+}
