@@ -1,7 +1,7 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
-
+use App\Http\Controllers\Login;
 /*
 |--------------------------------------------------------------------------
 | Web Routes
@@ -16,3 +16,8 @@ use Illuminate\Support\Facades\Route;
 Route::get('/', function () {
     return view('index');
 });
+Route::get('/login', function () {
+    return view('login');
+});
+Route::post('/login', [Login::class, 'login'])->name('login');
+Route::post('/logout', [Login::class, 'logout'])->name('logout');

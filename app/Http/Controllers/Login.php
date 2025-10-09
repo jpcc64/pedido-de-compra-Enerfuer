@@ -15,7 +15,7 @@ class Login extends Controller
 
         // Auth::attempt() se encarga de todo
         if (Auth::attempt($credentials)) {
-            AccionUsuarioRegistrada::dispatch(Auth::user(), 'Inicio de sesión');
+            // AccionUsuarioRegistrada::dispatch(Auth::user(), 'Inicio de sesión');
             $request->session()->regenerate(); // Protege contra session fixation
             return redirect('/');
         }
@@ -25,7 +25,7 @@ class Login extends Controller
 
     public function logout(Request $request)
     {
-        AccionUsuarioRegistrada::dispatch(Auth::user(), 'Cierre de sesión');
+        // AccionUsuarioRegistrada::dispatch(Auth::user(), 'Cierre de sesión');
 
         Auth::logout();
 
