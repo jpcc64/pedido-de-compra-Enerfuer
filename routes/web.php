@@ -2,6 +2,7 @@
 
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Login;
+use App\Http\Controllers\PedidodeCompraController;
 /*
 |--------------------------------------------------------------------------
 | Web Routes
@@ -21,3 +22,9 @@ Route::get('/login', function () {
 });
 Route::post('/login', [Login::class, 'login'])->name('login');
 Route::post('/logout', [Login::class, 'logout'])->name('logout');
+
+Route::post('/crearPedido', [PedidodeCompraController::class, 'crearPedido'])->name('crearPedido');
+Route::get('/consultaCompra', [PedidodeCompraController::class, 'consultaCompra'])->name('consultaCompra');
+
+Route::get('/clientes', [PedidodeCompraController::class, 'consultaCliente'])->name('consultaCliente');
+Route::get('/producto', [PedidodeCompraController::class, 'consultaProducto'])->name('consultaProducto');

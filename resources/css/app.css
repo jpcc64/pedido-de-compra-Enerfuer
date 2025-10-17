@@ -4,3 +4,19 @@
     -moz-appearance: none;
     appearance: none;
 }
+.autocomplete-suggestions {
+    position: absolute;
+    border: 1px solid #ddd;
+    background: white;
+    width: 100%;
+    z-index: 10;
+    max-height: 150px;
+    overflow-y: auto;
+}
+.autocomplete-suggestion {
+    padding: 8px;
+    cursor: pointer;
+}
+.autocomplete-suggestion:hover {
+    background-color: #f0f0f0;
+}
