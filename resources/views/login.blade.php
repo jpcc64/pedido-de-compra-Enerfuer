@@ -1,4 +1,4 @@
-@include('components.head')
+@include('layouts.head')
 
 <body class="bg-[radial-gradient(circle,_#3f3f47,_#0000ff)] flex items-center justify-center h-screen">
     <div class="bg-white p-8 rounded shadow-md w-full max-w-sm">

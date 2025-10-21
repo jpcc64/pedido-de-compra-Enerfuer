@@ -14,9 +14,7 @@ use App\Http\Controllers\PedidodeCompraController;
 |
 */
 
-Route::get('/', function () {
-    return view('index');
-});
+Route::get('/', [PedidodeCompraController::class, 'index'])->name('formPrincipal');
 Route::get('/login', function () {
     return view('login');
 });

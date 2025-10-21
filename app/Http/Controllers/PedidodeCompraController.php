@@ -9,7 +9,10 @@ class PedidodeCompraController extends Controller
 {
     public function index()
     {
-        return view('formPrincipal');
+
+        $productos = session('productos', []);
+        $cliente = session('cliente', []);
+        return view('formPrincipal', compact('productos', 'cliente'));
     }
 
     public function API_call($action, $data)
@@ -46,65 +49,56 @@ class PedidodeCompraController extends Controller
     {
         // Lógica para buscar un pedido de compra
         $accion = "consulta_PurchaseOrders";
-        $proveedor= [
+        $cliente = [
             "select" => "",
             "top" => 10,
         ];
         // Utilizar los criterios de búsqueda proporcionados en el formulario
 
-        $response = $this->API_call($accion, $proveedor);
+        $response = $this->API_call($accion, $cliente);
         $compras = $response['value'];
         // dd($compras);
-        return view('formPrincipal', ['compras' => $compras]); // Reemplazar con resultados reales
+        return view('index', ['compras' => $compras]); // Reemplazar con resultados reales
     }
 
     public function consultaProducto(Request $request)
     {
         $term = strtoupper(trim($request->get('ItemCode')));
-        // Sanitizamos la entrada para evitar problemas en el filtro OData
         $term = str_replace("'", "''", $term);
 
         $accion = "consultar_Items";
-        // dd($request->all());
         $data = [
-            "select" => "ItemCode,ItemName",
+            // "select" => "ItemCode,ItemName",
             "where" => "ItemCode eq '$term'",
         ];
-
+        
         try {
-            // Log::info('Enviando datos a SAP', ['accion' => $accion, 'datos' => $data]);
-            $response = Http::asForm()->post(env('API_SAP_URL'), [
-                'json' => json_encode([
-                    'accion' => $accion,
-                    'usuario' => 'dani',
-                    'datos' => $data
-                ])
-            ]);
+            $response = $this->API_call($accion, $data);
 
-            $result = $response->json();
-            // dd($data, ' ', $result);
-            // Verificamos si la respuesta contiene la clave 'value' y es un array
-            if (isset($result['value']) && is_array($result['value'])) {
-                // Log::info('Resultados de la busqueda: ', ['datos' => $result['value']]);
-
-                // CORRECCIÓN CLAVE: Devolvemos una respuesta JSON con la lista de productos.
-                return view('formPrincipal', ['productos' => $result['value'][0]]);
+            if ($request->ajax()) {
+                // Si es una petición AJAX, devolver JSON
+                if (isset($response['value']) && is_array($response['value'])) {
+                    return response()->json(['productos' => $response['value'][0]]);
+                }
+                return response()->json([]);
+            } else {
+                // Si es una petición normal, guardar en sesión y volver al formulario
+                if (isset($response['value']) && is_array($response['value'])) {
+                    session(['productos' => $response['value'][0]]);
+                }
+                return redirect()->route('formPrincipal');
             }
-
-            // Si no hay resultados o hay un error, devolvemos un array JSON vacío.
-            // Log::warning('La respuesta de SAP no contenía una lista de valores válida.', ['respuesta' => $result]);
-            return response()->json([]);
-
         } catch (\Exception $e) {
-            // Log::error('Excepción al consultar productos en SAP', ['exception' => $e->getMessage()]);
-            // En caso de error, devolvemos un JSON vacío con un código de error de servidor.
-            return response()->json([], 500);
+            if ($request->ajax()) {
+                return response()->json(['error' => $e->getMessage()], 500);
+            }
+            return redirect()->back()->with('error', $e->getMessage());
         }
     }
 
     public function consultaCliente(Request $request)
     {
-        //llamada a la API para obtener los clientes
+        $busqueda = strtoupper(trim($request->get('CardCode')));
         if (empty($busqueda))
             return [];
 
@@ -120,14 +114,20 @@ class PedidodeCompraController extends Controller
             "where" => "substringof('$busqueda', CardCode) or substringof('$busqueda', CardName) or substringof('$busqueda', Phone1) or FederalTaxID eq '$busqueda' or FederalTaxID eq '$busquedaConES'"
         ];
 
-        $response = Http::asForm()->post(env('API_SAP_URL'), [
-            'json' => json_encode([
-                'accion' => $accion,
-                'usuario' => env('API_SAP_USER', 'dani'),
-                'datos' => $data
-            ])
-        ]);
+        $response = $this->API_call($accion, $data);
 
-        $body = $response->json();
-        return ($body['value'] ?? []);    }
+        if ($request->ajax()) {
+            // Si es una petición AJAX, devolver JSON
+            if (isset($response['value']) && is_array($response['value'])) {
+                return response()->json(['cliente' => $response['value'][0]]);
+            }
+            return response()->json([]);
+        } else {
+            // Si es una petición normal, guardar en sesión y volver al formulario
+            if (isset($response['value']) && is_array($response['value'])) {
+                session(['cliente' => $response['value'][0]]);
+            }
+            return redirect()->route('formPrincipal');
+        }
+    }
 }

@@ -15,6 +15,38 @@
                         </div>
                     </div>
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-8 px-4 py-6">
+
+                        <div
+                            class="flex flex-col gap-6 p-6 rounded-lg bg-white dark:bg-background-dark border border-gray-200 dark:border-gray-700">
+                            <h3 class="text-xl font-bold text-gray-800 dark:text-white">Proveedor</h3>
+                            <!-- ////////// FORMULARIO DE PROVEEDOR ////////// -->
+                            <div class="flex flex-col gap-4">
+                                <label class="flex flex-col w-full">
+                                    <form action="{{ route('consultaCliente') }}" method="GET">
+                                        <p
+                                            class="text-gray-800 dark:text-gray-300 text-base font-medium leading-normal pb-2">
+                                            Código de Proveedor</p>
+                                        <input name="CardCode"
+                                            class="form-input flex w-full min-w-0 flex-1 resize-none overflow-hidden rounded-lg text-gray-800 dark:text-white focus:outline-0 focus:ring-2 focus:ring-primary/50 border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 focus:border-primary h-12 placeholder:text-gray-400 dark:placeholder-gray-500 p-3 text-base font-normal leading-normal"
+                                            placeholder="Ingrese el código del proveedor"
+                                            value="{{ $cliente['CardCode'] ?? '' }}" />
+                                </label>
+                                <label class="flex flex-col w-full">
+                                    <p
+                                        class="text-gray-800 dark:text-gray-300 text-base font-medium leading-normal pb-2">
+                                        Nombre de Proveedor</p>
+                                    <input name="CardName"
+                                        class="form-input flex w-full min-w-0 flex-1 resize-none overflow-hidden rounded-lg text-gray-800 dark:text-white focus:outline-0 focus:ring-2 focus:ring-primary/50 border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 focus:border-primary h-12 placeholder:text-gray-400 dark:placeholder-gray-500 p-3 text-base font-normal leading-normal"
+                                        placeholder="Ingrese el nombre del proveedor"
+                                        value="{{ $cliente['CardName'] ?? '' }}" />
+
+                                    <input type="submit"
+                                        class="bg-primary/80 text-white rounded-lg px-4 py-2 h-12 w-1/3 mt-4"
+                                        value="Buscar"></input>
+                                    </form>
+                                </label>
+                            </div>
+                        </div>
                         <div
                             class="flex flex-col gap-6 p-6 rounded-lg bg-white dark:bg-background-dark border border-gray-200 dark:border-gray-700">
                             <h3 class="text-xl font-bold text-gray-800 dark:text-white">Producto</h3>
@@ -28,8 +60,10 @@
                                         <div class="flex w-full gap-2">
                                             <input name="ItemCode" type="text"
                                                 class="form-input flex-1 min-w-0 resize-none overflow-hidden rounded-lg text-gray-800 dark:text-white focus:outline-0 focus:ring-2 focus:ring-primary/50 border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 focus:border-primary h-12 placeholder:text-gray-400 dark:placeholder-gray-500 p-3 text-base font-normal leading-normal"
-                                                placeholder="Ingrese el código del producto" value="{{ isset($productos['ItemCode']) ? $productos['ItemCode'] : '' }}" />
-                                            <input type="submit" class="bg-primary/80 text-white rounded-lg px-4 py-2 h-12" value="Busca"></input>
+                                                placeholder="Ingrese el código del producto"
+                                                value="{{ isset($productos['ItemCode']) ? $productos['ItemCode'] : '' }}" />
+                                            <button type="button" id="buscarProducto"
+                                                class="bg-primary/80 text-white rounded-lg px-4 py-2">Buscar</button>
                                         </div>
                                 </form>
                                 </label>
@@ -37,45 +71,35 @@
                                     <p
                                         class="text-gray-800 dark:text-gray-300 text-base font-medium leading-normal pb-2">
                                         Nombre de Producto</p>
-                                    <input
+                                    <input name="ItemName"
                                         class="form-input flex w-full min-w-0 flex-1 resize-none overflow-hidden rounded-lg text-gray-800 dark:text-white focus:outline-0 focus:ring-2 focus:ring-primary/50 border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 focus:border-primary h-12 placeholder:text-gray-400 dark:placeholder-gray-500 p-3 text-base font-normal leading-normal"
-                                        placeholder="Ingrese el nombre del producto" value="{{ isset($productos['ItemName']) ? $productos['ItemName'] : '' }}" />
+                                        placeholder="Ingrese el nombre del producto"
+                                        value="{{ isset($productos['ItemName']) ? $productos['ItemName'] : '' }}" />
                                 </label>
-                                <label class="flex flex-col w-full">
-                                    <p
-                                        class="text-gray-800 dark:text-gray-300 text-base font-medium leading-normal pb-2">
-                                        Unidades</p>
-                                    <input
-                                        class="form-input flex w-full min-w-0 flex-1 resize-none overflow-hidden rounded-lg text-gray-800 dark:text-white focus:outline-0 focus:ring-2 focus:ring-primary/50 border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 focus:border-primary h-12 placeholder:text-gray-400 dark:placeholder-gray-500 p-3 text-base font-normal leading-normal"
-                                        placeholder="Ingrese el número de unidades" type="number" value="" />
-                                </label>
-                            </div>
-                        </div>
-                        <div
-                            class="flex flex-col gap-6 p-6 rounded-lg bg-white dark:bg-background-dark border border-gray-200 dark:border-gray-700">
-                            <h3 class="text-xl font-bold text-gray-800 dark:text-white">Proveedor</h3>
-                            <!-- ////////// FORMULARIO DE PROVEEDOR ////////// -->
-                            <div class="flex flex-col gap-4">
-                                <label class="flex flex-col w-full">
-                                    <p
-                                        class="text-gray-800 dark:text-gray-300 text-base font-medium leading-normal pb-2">
-                                        Código de Proveedor</p>
-                                    <input
-                                        class="form-input flex w-full min-w-0 flex-1 resize-none overflow-hidden rounded-lg text-gray-800 dark:text-white focus:outline-0 focus:ring-2 focus:ring-primary/50 border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 focus:border-primary h-12 placeholder:text-gray-400 dark:placeholder-gray-500 p-3 text-base font-normal leading-normal"
-                                        placeholder="Ingrese el código del proveedor" value="" />
-                                </label>
-                                <label class="flex flex-col w-full">
-                                    <p
-                                        class="text-gray-800 dark:text-gray-300 text-base font-medium leading-normal pb-2">
-                                        Nombre de Proveedor</p>
-                                    <input
-                                        class="form-input flex w-full min-w-0 flex-1 resize-none overflow-hidden rounded-lg text-gray-800 dark:text-white focus:outline-0 focus:ring-2 focus:ring-primary/50 border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 focus:border-primary h-12 placeholder:text-gray-400 dark:placeholder-gray-500 p-3 text-base font-normal leading-normal"
-                                        placeholder="Ingrese el nombre del proveedor" value="" />
-                                </label>
+                                <div class="flex gap-4">
+                                    <label class="flex flex-col flex-1 min-w-0">
+                                        <p
+                                            class="text-gray-800 dark:text-gray-300 text-base font-medium leading-normal pb-2">
+                                            Unidades</p>
+                                        <input name="Quantity" type="number" min="0" step="1"
+                                            class="form-input w-full min-w-0 resize-none overflow-hidden rounded-lg text-gray-800 dark:text-white focus:outline-0 focus:ring-2 focus:ring-primary/50 border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 focus:border-primary h-12 placeholder:text-gray-400 dark:placeholder-gray-500 p-3 text-base font-normal leading-normal"
+                                            placeholder="Número de unidades" value="" />
+                                    </label>
+
+                                    <label class="flex flex-col flex-1 min-w-0">
+                                        <p
+                                            class="text-gray-800 dark:text-gray-300 text-base font-medium leading-normal pb-2">
+                                            Precio total</p>
+                                        <input name="TotalPrice" type="number" min="0"
+                                            class="form-input w-full min-w-0 resize-none overflow-hidden rounded-lg text-gray-800 dark:text-white focus:outline-0 focus:ring-2 focus:ring-primary/50 border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 focus:border-primary h-12 placeholder:text-gray-400 dark:placeholder-gray-500 p-3 text-base font-normal leading-normal"
+                                            placeholder="Precio en €" value="" />
+                                    </label>
+                                </div>
                             </div>
                         </div>
                     </div>
-                    <div class="px-4 py-3 justify-start">
+
+                    <div class="px-4 py-3 justify-end">
                         <!-- /////// BOTON DE AÑADIR PRODUCTO AL PEDIDO /////// -->
                         <button
                             class="flex min-w-[84px] max-w-[480px] cursor-pointer items-center justify-center overflow-hidden rounded-lg h-10 px-4 bg-primary/20 text-primary gap-2 pl-4 text-sm font-bold leading-normal tracking-[0.015em]">
@@ -119,40 +143,6 @@
                                             </button>
                                         </td>
                                     </tr>
-                                    <tr>
-                                        <td
-                                            class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900 dark:text-white">
-                                            PROD-002</td>
-                                        <td
-                                            class="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-300">
-                                            Monitor 27" 4K</td>
-                                        <td
-                                            class="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-300">
-                                            25</td>
-                                        <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
-                                            <button
-                                                class="text-red-600 hover:text-red-900 dark:text-red-500 dark:hover:text-red-400">
-                                                <span class="material-symbols-outlined text-xl">delete</span>
-                                            </button>
-                                        </td>
-                                    </tr>
-                                    <tr>
-                                        <td
-                                            class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900 dark:text-white">
-                                            PROD-003</td>
-                                        <td
-                                            class="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-300">
-                                            Teclado Mecánico</td>
-                                        <td
-                                            class="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-300">
-                                            50</td>
-                                        <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
-                                            <button
-                                                class="text-red-600 hover:text-red-900 dark:text-red-500 dark:hover:text-red-400">
-                                                <span class="material-symbols-outlined text-xl">delete</span>
-                                            </button>
-                                        </td>
-                                    </tr>
                                 </tbody>
                             </table>
                         </div>
@@ -171,6 +161,47 @@
             </main>
         </div>
     </div>
+
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script>
+        $(document).ready(function () {
+            // Búsqueda de productos
+            $('#buscarProducto').click(function (e) {
+                e.preventDefault();
+                $.get('{{ route('consultaProducto') }}', {
+                    ItemCode: $('input[name="ItemCode"]').val()
+                })
+                    .done(function (response) {
+                        if (response.productos) {
+                            const firstPrice = response.productos.AvgStdPrice;
+                            let unidades = $('input[name="Quantity"]').val();
+                            
+                            console.log(firstPrice);
+
+                            // ejemplo: asignar un campo con una propiedad del primer objeto si existe
+                            if (firstPrice) {
+                                $('input[name="TotalPrice"]').val(firstPrice * unidades ?? '');
+                            }
+                            $('input[name="ItemName"]').val(response.productos.ItemName);
+                        }
+                    });
+            });
+
+            // Búsqueda de clientes
+            $('#buscarCliente').click(function (e) {
+                e.preventDefault();
+                $.get('{{ route('consultaCliente') }}', {
+                    CardCode: $('input[name="CardCode"]').val()
+                })
+                    .done(function (response) {
+                        if (response.cliente) {
+                            $('input[name="CardName"]').val(response.cliente.CardName);
+                            // Aquí puedes actualizar otros campos del cliente
+                        }
+                    });
+            });
+        });
+    </script>
 </body>
 
 </html>
