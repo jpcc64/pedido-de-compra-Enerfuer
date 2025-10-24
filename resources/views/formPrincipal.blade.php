@@ -26,7 +26,7 @@
                                         <p
                                             class="text-gray-800 dark:text-gray-300 text-base font-medium leading-normal pb-2">
                                             Código de Proveedor</p>
-                                        <input name="CardCode"
+                                        <input name="CardCode" id="buscarCliente"
                                             class="form-input flex w-full min-w-0 flex-1 resize-none overflow-hidden rounded-lg text-gray-800 dark:text-white focus:outline-0 focus:ring-2 focus:ring-primary/50 border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 focus:border-primary h-12 placeholder:text-gray-400 dark:placeholder-gray-500 p-3 text-base font-normal leading-normal"
                                             placeholder="Ingrese el código del proveedor"
                                             value="{{ $cliente['CardCode'] ?? '' }}" />
@@ -90,9 +90,9 @@
                                         <p
                                             class="text-gray-800 dark:text-gray-300 text-base font-medium leading-normal pb-2">
                                             Precio total</p>
-                                        <input name="TotalPrice" type="number" min="0"
+                                        <input name="UnitPrice" type="number" min="0" id="UnitPrice"
                                             class="form-input w-full min-w-0 resize-none overflow-hidden rounded-lg text-gray-800 dark:text-white focus:outline-0 focus:ring-2 focus:ring-primary/50 border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 focus:border-primary h-12 placeholder:text-gray-400 dark:placeholder-gray-500 p-3 text-base font-normal leading-normal"
-                                            placeholder="Precio en €" value="" />
+                                            placeholder="Precio en €" value="{{ isset($productos['AvgStdPrice']) ? $productos['AvgStdPrice'] : '' }}" />
                                     </label>
                                 </div>
                             </div>
@@ -174,13 +174,12 @@
                     .done(function (response) {
                         if (response.productos) {
                             const firstPrice = response.productos.AvgStdPrice;
-                            let unidades = $('input[name="Quantity"]').val();
-                            
+                            console.log(response.productos);
                             console.log(firstPrice);
 
                             // ejemplo: asignar un campo con una propiedad del primer objeto si existe
                             if (firstPrice) {
-                                $('input[name="TotalPrice"]').val(firstPrice * unidades ?? '');
+                                $('input[name="UnitPrice"]').val(firstPrice);
                             }
                             $('input[name="ItemName"]').val(response.productos.ItemName);
                         }
