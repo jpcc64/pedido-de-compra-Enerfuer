@@ -71,7 +71,7 @@ class PedidodeCompraController extends Controller
             // "select" => "ItemCode,ItemName",
             "where" => "ItemCode eq '$term'",
         ];
-        
+
         try {
             $response = $this->API_call($accion, $data);
 
@@ -129,5 +129,70 @@ class PedidodeCompraController extends Controller
             }
             return redirect()->route('formPrincipal');
         }
+    }
+
+    // Dentro de PedidoController.php
+
+    public function addProducto(Request $request)
+    {
+        // Valida y obtiene los datos
+        $validated = $request->validate([
+            'ItemCode' => 'required|string',
+            'ItemName' => 'required|string',
+            'Quantity' => 'required|integer|min:1',
+            'UnitPrice' => 'required|numeric|min:0',
+        ]);
+
+        $carrito = $request->session()->get('carrito.items', []);
+
+        // Añade o actualiza el producto usando ItemCode como clave
+        $carrito[$validated['ItemCode']] = [
+            'ItemCode' => $validated['ItemCode'],
+            'ItemName' => $validated['ItemName'],
+            'Quantity' => (int) $validated['Quantity'],
+            'UnitPrice' => (float) $validated['UnitPrice'],
+        ];
+
+        $request->session()->put('carrito.items', $carrito);
+
+        return response()->json([
+            'success' => true,
+            'carrito' => array_values($carrito) // Devuelve como array para JS
+        ]);
+    }
+
+    public function removeProducto(Request $request)
+    {
+        $itemCode = $request->input('ItemCode');
+        $carrito = $request->session()->get('carrito.items', []);
+
+        if (isset($carrito[$itemCode])) {
+            unset($carrito[$itemCode]);
+            $request->session()->put('carrito.items', $carrito);
+        }
+
+        return response()->json([
+            'success' => true,
+            'carrito' => array_values($carrito)
+        ]);
+    }
+
+    public function updateQuantity(Request $request)
+    {
+        $itemCode = $request->input('ItemCode');
+        $newQuantity = (int) $request->input('Quantity');
+        $carrito = $request->session()->get('carrito.items', []);
+
+        if (isset($carrito[$itemCode]) && $newQuantity > 0) {
+            $carrito[$itemCode]['Quantity'] = $newQuantity;
+            $request->session()->put('carrito.items', $carrito);
+
+            return response()->json([
+                'success' => true,
+                'carrito' => array_values($carrito)
+            ]);
+        }
+
+        return response()->json(['success' => false, 'error_message' => 'Producto no encontrado o cantidad inválida.']);
     }
 }

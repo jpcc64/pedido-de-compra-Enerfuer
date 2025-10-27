@@ -26,3 +26,7 @@ Route::get('/consultaCompra', [PedidodeCompraController::class, 'consultaCompra'
 
 Route::get('/clientes', [PedidodeCompraController::class, 'consultaCliente'])->name('consultaCliente');
 Route::get('/producto', [PedidodeCompraController::class, 'consultaProducto'])->name('consultaProducto');
+Route::post('/pedidos/add-producto', [PedidodeCompraController::class, 'addProducto'])->name('pedidos.addProducto');
+Route::post('/pedidos/remove-producto', [PedidodeCompraController::class, 'removeProducto'])->name('pedidos.removeProducto');
+Route::post('/pedidos/update-quantity', [PedidodeCompraController::class, 'updateQuantity'])->name('pedidos.updateQuantity'); // Nueva
+Route::get('/pedidos/fetch-carrito', [PedidodeCompraController::class, 'fetchCarrito'])->name('pedidos.fetchCarrito');       // Opcional, para recargar el carrito
