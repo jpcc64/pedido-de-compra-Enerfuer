@@ -4,7 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Http;
-use illumunate\Support\Facades\Log;
+use Illuminate\Support\Facades\Log;
 class PedidodeCompraController extends Controller
 {
     public function index()
@@ -31,7 +31,7 @@ class PedidodeCompraController extends Controller
     public function crearPedido(Request $request)
     {
         // Lógica para crear un pedido de compra         
-        $accion = "consulta_PurchaseOrders";
+        $accion = "crear_PurchaseOrders";
         $form = $request->all();
         $itemLines = [];
         if (isset($form['items']) && is_array($form['items'])) {
@@ -43,7 +43,7 @@ class PedidodeCompraController extends Controller
                     "WarehouseCode" => $form['Warehouse']
                 ]);
             }
-        }else{
+        } else {
             return redirect()->back()->with('error', 'No hay productos en el pedido.');
         }
         $data = [
@@ -51,12 +51,14 @@ class PedidodeCompraController extends Controller
             "U_H8_SYNCHRO" => "S",//si=S  no=N
             "DocumentLines" => $itemLines
         ];
-        
+
         $response = $this->API_call($accion, $data);
 
         if (isset($response['error'])) {
+            Log::channel('purchase_orders')->error('Error al crear el pedido de compra', ['error' => $response['error'], 'data' => $data]);
             return redirect()->back()->with('error', 'Error al crear el pedido de compra: ' . $response['error']);
         }
+        Log::channel('purchase_orders')->info('Pedido de compra creado exitosamente', ['response' => $response, 'data' => $data]);
         return redirect()->back()->with('success', 'Pedido de compra creado exitosamente.');
     }
 
@@ -92,8 +94,10 @@ class PedidodeCompraController extends Controller
             if ($request->ajax()) {
                 // Si es una petición AJAX, devolver JSON
                 if (isset($response['value']) && is_array($response['value'])) {
+                    Log::channel('purchase_orders')->info('Producto encontrado', ['ItemCode' => $term, 'response' => $response['value'][0]]);
                     return response()->json(['productos' => $response['value'][0]]);
                 }
+                Log::channel('purchase_orders')->warning('Producto no encontrado', ['ItemCode' => $term]);
                 return response()->json([]);
             } else {
                 // Si es una petición normal, guardar en sesión y volver al formulario
@@ -103,6 +107,7 @@ class PedidodeCompraController extends Controller
                 return redirect()->route('formPrincipal');
             }
         } catch (\Exception $e) {
+            Log::channel('purchase_orders')->error('Error al consultar el producto', ['error' => $e->getMessage(), 'ItemCode' => $term]);
             if ($request->ajax()) {
                 return response()->json(['error' => $e->getMessage()], 500);
             }
@@ -133,6 +138,8 @@ class PedidodeCompraController extends Controller
 
         $request->session()->put('carrito.items', $carrito);
 
+        Log::channel('purchase_orders')->info('Producto añadido al carrito', ['producto' => $validated]);
+
         return response()->json([
             'success' => true,
             'carrito' => array_values($carrito) // Devuelve como array para JS
@@ -147,6 +154,7 @@ class PedidodeCompraController extends Controller
         if (isset($carrito[$itemCode])) {
             unset($carrito[$itemCode]);
             $request->session()->put('carrito.items', $carrito);
+            Log::channel('purchase_orders')->info('Producto eliminado del carrito', ['ItemCode' => $itemCode]);
         }
 
         return response()->json([
@@ -164,13 +172,14 @@ class PedidodeCompraController extends Controller
         if (isset($carrito[$itemCode]) && $newQuantity > 0) {
             $carrito[$itemCode]['Quantity'] = $newQuantity;
             $request->session()->put('carrito.items', $carrito);
+            Log::channel('purchase_orders')->info('Cantidad de producto actualizada', ['ItemCode' => $itemCode, 'newQuantity' => $newQuantity]);
 
             return response()->json([
                 'success' => true,
                 'carrito' => array_values($carrito)
             ]);
         }
-
+        Log::channel('purchase_orders')->warning('Error al actualizar la cantidad del producto', ['ItemCode' => $itemCode, 'newQuantity' => $newQuantity]);
         return response()->json(['success' => false, 'error_message' => 'Producto no encontrado o cantidad inválida.']);
     }
 
@@ -181,5 +190,13 @@ class PedidodeCompraController extends Controller
         return response()->json([
             'carrito' => array_values($carrito)
         ]);
+    }
+
+    public function logFrontendEvent(Request $request)
+    {
+        $message = $request->input('message');
+        $context = $request->input('context', []);
+        Log::channel('purchase_orders')->info($message, $context);
+        return response()->json(['success' => true]);
     }
 }

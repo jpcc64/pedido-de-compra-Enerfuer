@@ -181,7 +181,7 @@
                             class="flex min-w-[84px] max-w-[480px] cursor-pointer items-center justify-center overflow-hidden rounded-lg h-10 px-4 bg-gray-200 dark:bg-gray-700 text-gray-800 dark:text-white text-sm font-bold leading-normal tracking-[0.015em]">
                             <span class="truncate">Cancelar</span>
                         </button>
-                        <button type="submit"
+                        <button type="submit" id="crearPedidoBtn"
                             class="flex min-w-[84px] max-w-[480px] cursor-pointer items-center justify-center overflow-hidden rounded-lg h-10 px-4 bg-primary text-white text-sm font-bold leading-normal tracking-[0.015em]">
                             <span class="truncate">Crear Pedido</span>
                         </button>
@@ -199,6 +199,14 @@
 
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <script>
+    function logEvent(message, context = {}) {
+        $.post('{{ route('logFrontendEvent') }}', {
+            _token: '{{ csrf_token() }}',
+            message: message,
+            context: context
+        });
+    }
+
     $(document).ready(function () {
         // Asignar IDs a los inputs de producto para una referencia más clara
         const $itemCodeInput = $('input[name="ItemCode"]');
@@ -213,6 +221,7 @@
         $('#buscarProducto').click(function (e) {
             e.preventDefault();
             const itemCode = $itemCodeInput.val();
+            logEvent('Búsqueda de producto iniciada', { itemCode: itemCode });
             if (!itemCode) {
                 alert('Por favor, ingrese un Código de Producto.');
                 return;
@@ -223,6 +232,7 @@
                     if (response.productos) {
                         const product = response.productos;
                         console.log('Producto encontrado:', product);
+                        logEvent('Producto encontrado', { itemCode: itemCode, product: product });
                         // Rellenar campos del producto
                         $itemNameInput.val(product.ItemName || '');
                         // Asigna AvgStdPrice como precio unitario si está disponible
@@ -231,6 +241,7 @@
                         $stockInput.val(product.QuantityOnStock + " unidades" || '');
                     } else {
                         alert('Producto no encontrado.');
+                        logEvent('Producto no encontrado', { itemCode: itemCode });
                         $itemNameInput.val('');
                         $unitPriceInput.val('0.00');
                         $quantityInput.val('1');
@@ -238,6 +249,7 @@
                 })
                 .fail(function (xhr, status, error) {
                     console.error('Error al buscar producto:', error, xhr.responseText);
+                    logEvent('Error al buscar producto', { itemCode: itemCode, error: error });
                     alert('Hubo un error de conexión al buscar el producto.');
                 });
         });
@@ -275,6 +287,7 @@
                 Quantity: $quantityInput.val(),
                 UnitPrice: $unitPriceInput.val()
             };
+            logEvent('Añadir producto al pedido', { product: formData });
 
             $.post('{{ route('pedidos.addProducto') }}', formData)
                 .done(function (response) {
@@ -361,6 +374,7 @@
         // Delegación de evento para eliminar producto
         $(document).on('click', '.remove-product-btn', function () {
             const itemCodeToRemove = $(this).data('item-code');
+            logEvent('Eliminar producto del pedido', { itemCode: itemCodeToRemove });
 
             // Petición AJAX para eliminar el producto de la sesión
             $.post('{{ route('pedidos.removeProducto') }}', {
@@ -394,6 +408,7 @@
                 return;
             }
 
+            logEvent('Actualizar cantidad de producto', { itemCode: itemCodeToUpdate, newQuantity: newQuantity });
             // Petición AJAX para actualizar la cantidad del producto en la sesión
             $.post('{{ route('pedidos.updateQuantity') }}', { // Necesitarás crear esta ruta
                 _token: $('meta[name="csrf-token"]').attr('content'),
@@ -429,5 +444,9 @@
                     updateCartTable(response.carrito);
                 }
             });
+        $('#crearPedidoBtn').click(function (e) {
+            logEvent('Crear pedido de compra');
+        });
+
     });
 </script>
