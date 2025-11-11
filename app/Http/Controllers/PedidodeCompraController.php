@@ -32,16 +32,31 @@ class PedidodeCompraController extends Controller
     {
         // Lógica para crear un pedido de compra         
         $accion = "consulta_PurchaseOrders";
-        // $data = $request->all();
+        $form = $request->all();
+        $itemLines = [];
+        if (isset($form['items']) && is_array($form['items'])) {
+            foreach ($form['items'] as $item) {
+                array_push($itemLines, [
+                    "ItemCode" => $item['ItemCode'],//código producto
+                    "Quantity" => $item['Quantity'],//cantidad
+                    "UnitPrice" => $item['UnitPrice'],//precios de coste
+                    "WarehouseCode" => $form['Warehouse']
+                ]);
+            }
+        }else{
+            return redirect()->back()->with('error', 'No hay productos en el pedido.');
+        }
         $data = [
-            "select" => "",
+            "CardCode" => $form['CardCode'],//proveedor
+            "U_H8_SYNCHRO" => "S",//si=S  no=N
+            "DocumentLines" => $itemLines
         ];
+        
         $response = $this->API_call($accion, $data);
 
         if (isset($response['error'])) {
             return redirect()->back()->with('error', 'Error al crear el pedido de compra: ' . $response['error']);
         }
-        dd($response);
         return redirect()->back()->with('success', 'Pedido de compra creado exitosamente.');
     }
 
@@ -74,7 +89,6 @@ class PedidodeCompraController extends Controller
 
         try {
             $response = $this->API_call($accion, $data);
-
             if ($request->ajax()) {
                 // Si es una petición AJAX, devolver JSON
                 if (isset($response['value']) && is_array($response['value'])) {
@@ -96,42 +110,6 @@ class PedidodeCompraController extends Controller
         }
     }
 
-    public function consultaCliente(Request $request)
-    {
-        $busqueda = strtoupper(trim($request->get('CardCode')));
-        if (empty($busqueda))
-            return [];
-
-        $busquedaConES = $busqueda;
-        if (!str_starts_with($busqueda, 'ES')) {
-            $busquedaConES = 'ES' . $busqueda;
-        }
-        $busqueda = str_replace("'", "''", $busqueda);
-
-        $accion = "consultar_BusinessPartners";
-        $data = [
-            "select" => "CardCode,CardName,Phone1,FederalTaxID",
-            "where" => "substringof('$busqueda', CardCode) or substringof('$busqueda', CardName) or substringof('$busqueda', Phone1) or FederalTaxID eq '$busqueda' or FederalTaxID eq '$busquedaConES'"
-        ];
-
-        $response = $this->API_call($accion, $data);
-
-        if ($request->ajax()) {
-            // Si es una petición AJAX, devolver JSON
-            if (isset($response['value']) && is_array($response['value'])) {
-                return response()->json(['cliente' => $response['value'][0]]);
-            }
-            return response()->json([]);
-        } else {
-            // Si es una petición normal, guardar en sesión y volver al formulario
-            if (isset($response['value']) && is_array($response['value'])) {
-                session(['cliente' => $response['value'][0]]);
-            }
-            return redirect()->route('formPrincipal');
-        }
-    }
-
-    // Dentro de PedidoController.php
 
     public function addProducto(Request $request)
     {
@@ -194,5 +172,14 @@ class PedidodeCompraController extends Controller
         }
 
         return response()->json(['success' => false, 'error_message' => 'Producto no encontrado o cantidad inválida.']);
+    }
+
+    public function fetchCarrito(Request $request)
+    {
+        $carrito = $request->session()->get('carrito.items', []);
+
+        return response()->json([
+            'carrito' => array_values($carrito)
+        ]);
     }
 }

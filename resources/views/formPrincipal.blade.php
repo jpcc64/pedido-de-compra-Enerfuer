@@ -13,7 +13,27 @@
                             <p class="text-gray-500 dark:text-gray-400 text-base font-normal leading-normal">Rellene los
                                 detalles del producto y del proveedor para crear un nuevo pedido de compra.</p>
                         </div>
+                        <form action="{{ route('logout') }}" method="POST">
+                            @csrf
+                            <button type="submit"
+                                class="flex min-w-[84px] max-w-[480px] cursor-pointer items-center justify-center overflow-hidden rounded-lg h-10 px-4 bg-red-600 text-white text-sm font-bold leading-normal tracking-[0.015em]">
+                                <span class="truncate">Cerrar Sesión</span>
+                            </button>
+                        </form>
                     </div>
+                    <!-- mensaje de succes o error -->
+                    @if (session('success'))
+                        <div class="p-4 mb-4 text-sm text-green-700 bg-green-100 rounded-lg dark:bg-green-200 dark:text-green-800 w-1/4"
+                            role="alert">
+                            {{ session('success') }}
+                        </div>
+                    @endif
+                    @if (session('error'))
+                        <div class="p-4 mb-4 text-sm text-red-700 bg-red-100 rounded-lg dark:bg-red-200 dark:text-red-800 w-1/4"
+                            role="alert">
+                            {{ session('error') }}
+                        </div>
+                    @endif
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-8 px-4 py-6">
 
                         <div
@@ -22,35 +42,36 @@
                             <!-- ////////// FORMULARIO DE PROVEEDOR ////////// -->
                             <div class="flex flex-col gap-4">
                                 <label class="flex flex-col w-full">
-                                    <form action="{{ route('consultaCliente') }}" method="GET">
-                                        <p
-                                            class="text-gray-800 dark:text-gray-300 text-base font-medium leading-normal pb-2">
-                                            Código de Proveedor</p>
-                                        <input name="CardCode"
-                                            class="form-input flex w-full min-w-0 flex-1 resize-none overflow-hidden rounded-lg text-gray-800 dark:text-white focus:outline-0 focus:ring-2 focus:ring-primary/50 border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 focus:border-primary h-12 placeholder:text-gray-400 dark:placeholder-gray-500 p-3 text-base font-normal leading-normal"
-                                            placeholder="Ingrese el código del proveedor"
-                                            value="{{ $cliente['CardCode'] ?? '' }}" />
-                                </label>
-                                <label class="flex flex-col w-full">
-                                    <p
-                                        class="text-gray-800 dark:text-gray-300 text-base font-medium leading-normal pb-2">
+                                    <p class="text-gray-800 dark:text-gray-300 text-base font-medium leading-normal">
                                         Nombre de Proveedor</p>
-                                    <input name="CardName"
-                                        class="form-input flex w-full min-w-0 flex-1 resize-none overflow-hidden rounded-lg text-gray-800 dark:text-white focus:outline-0 focus:ring-2 focus:ring-primary/50 border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 focus:border-primary h-12 placeholder:text-gray-400 dark:placeholder-gray-500 p-3 text-base font-normal leading-normal"
-                                        placeholder="Ingrese el nombre del proveedor"
-                                        value="{{ $cliente['CardName'] ?? '' }}" />
+                                    <select id="CardCode"
+                                        class="form-input mt-2 flex w-full min-w-0 flex-1 resize-none overflow-hidden rounded-lg text-gray-800 dark:text-white focus:outline-0 focus:ring-2 focus:ring-primary/50 border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 focus:border-primary h-12 placeholder:text-gray-400 dark:placeholder-gray-500 p-3 text-base font-normal leading-normal">
+                                        <option value="">Seleccione un proveedor</option>
+                                        <option value="P0000690">Prefabricados Nortysur</option>
+                                        <option value="P0000691">Enerfuer</option>
+                                    </select>
+                                    <p
+                                        class="text-gray-800 dark:text-gray-300 text-base font-medium leading-normal mt-3">
+                                        Nombre de Almacén</p>
+                                    <select id="Warehouse"
+                                        class="form-input mt-2 flex w-full min-w-0 flex-1 resize-none overflow-hidden rounded-lg text-gray-800 dark:text-white focus:outline-0 focus:ring-2 focus:ring-primary/50 border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 focus:border-primary h-12 placeholder:text-gray-400 dark:placeholder-gray-500 p-3 text-base font-normal leading-normal">
+                                        <option value="">Seleccione un almacén</option>
+                                        <option value="12">Almacen 12</option>
+                                        <option value="14">Almacen 14</option>
+                                        <option value="07">Almacen 07</option>
+                                        <option value="28">Almacen 28</option>
+                                        <option value="25">Almacen 25</option>
+                                    </select>
 
-                                    <input type="button" id="buscarCliente"
-                                        class="flex w-1/4 mt-2 cursor-pointer rounded-lg h-10 px-4 bg-primary/80 text-white text-sm font-bold leading-normal tracking-[0.015em]"
-                                        value="Buscar"></input>
-                                    </form>
                                 </label>
+
                             </div>
                         </div>
                         <div
                             class="flex flex-col gap-6 p-6 rounded-lg bg-white dark:bg-background-dark border border-gray-200 dark:border-gray-700">
                             <h3 class="text-xl font-bold text-gray-800 dark:text-white">Producto</h3>
                             <!-- ////////// FORMULARIO DE PRODUCTO ////////// -->
+
                             <div class="flex flex-col gap-4">
                                 <form action="{{ route('consultaProducto') }}" method="GET" id="formProducto">
                                     <label class="flex flex-col w-full">
@@ -70,11 +91,15 @@
                                     <label class="flex flex-col w-full">
                                         <p
                                             class="text-gray-800 dark:text-gray-300 text-base font-medium leading-normal pb-2">
-                                            Nombre de Producto</p>
+                                           Producto</p>
                                         <input name="ItemName"
                                             class="form-input flex w-full min-w-0 flex-1 resize-none overflow-hidden rounded-lg text-gray-800 dark:text-white focus:outline-0 focus:ring-2 focus:ring-primary/50 border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 focus:border-primary h-12 placeholder:text-gray-400 dark:placeholder-gray-500 p-3 text-base font-normal leading-normal"
                                             placeholder="Ingrese el nombre del producto"
                                             value="{{ isset($productos['ItemName']) ? $productos['ItemName'] : '' }}" />
+                                        <input type="text" name="Stock" 
+                                            class="form-input flex w-full min-w-0 flex-1 resize-none overflow-hidden rounded-lg text-gray-800 dark:text-white focus:outline-0 focus:ring-2 focus:ring-primary/50 border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 focus:border-primary h-12 placeholder:text-gray-400 dark:placeholder-gray-500 p-3 mt-2 text-base font-normal leading-normal"
+                                            placeholder="Stock disponible"
+                                            value="{{ isset($productos['QuantityOnStock']) ? $productos['QuantityOnStock'] : '' }}">
                                     </label>
                                     <div class="flex gap-4">
                                         <label class="flex flex-col flex-1 min-w-0">
@@ -100,7 +125,6 @@
                             </div>
                         </div>
                     </div>
-
                     <div class="px-4 py-3 justify-end">
                         <!-- /////// BOTON DE AÑADIR PRODUCTO AL PEDIDO /////// -->
                         <button id="subirProducto"
@@ -115,9 +139,8 @@
                             class="overflow-x-auto rounded-lg border border-gray-200 dark:border-gray-700 bg-white dark:bg-background-dark">
                             <form action="{{ route('crearPedido') }}" method="POST">
                                 @csrf
-                                <input type="hidden" name="CardCode" value="{{ $cliente['CardCode'] ?? '' }}"
-                                    id="finalCardCode">
-
+                                <input type="hidden" name="CardCode" id="finalCardCode">
+                                <input type="hidden" name="Warehouse" id="finalCardCode" value="">
                                 <table class="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
                                     <thead class="bg-gray-50 dark:bg-gray-800">
                                         <tr>
@@ -184,6 +207,7 @@
         const $unitPriceInput = $('input[name="UnitPrice"]');
         const $cardCodeInput = $('input[name="CardCode"]');
         const $cardNameInput = $('input[name="CardName"]');
+        const $stockInput = $('input[name="Stock"]');
 
         // Búsqueda de productos
         $('#buscarProducto').click(function (e) {
@@ -198,11 +222,13 @@
                 .done(function (response) {
                     if (response.productos) {
                         const product = response.productos;
+                        console.log('Producto encontrado:', product);
                         // Rellenar campos del producto
                         $itemNameInput.val(product.ItemName || '');
                         // Asigna AvgStdPrice como precio unitario si está disponible
                         $unitPriceInput.val(parseFloat(product.AvgStdPrice || 0).toFixed(2));
                         $quantityInput.val('1'); // Pone 1 por defecto al buscar
+                        $stockInput.val(product.QuantityOnStock + " unidades" || '');
                     } else {
                         alert('Producto no encontrado.');
                         $itemNameInput.val('');
@@ -213,33 +239,6 @@
                 .fail(function (xhr, status, error) {
                     console.error('Error al buscar producto:', error, xhr.responseText);
                     alert('Hubo un error de conexión al buscar el producto.');
-                });
-        });
-
-        // Búsqueda de clientes/proveedores
-        $('#buscarCliente').click(function (e) {
-            e.preventDefault();
-            const cardCode = $cardCodeInput.val();
-            if (!cardCode) {
-                alert('Por favor, ingrese un Código de Proveedor.');
-                return;
-            }
-
-            $.get('{{ route('consultaCliente') }}', { CardCode: cardCode })
-                .done(function (response) {
-                    if (response.cliente) {
-                        // Rellenar campos del proveedor
-                        $cardNameInput.val(response.cliente.CardName || '');
-                        $('#finalCardCode').val(response.cliente.CardCode);
-                    } else {
-                        alert('Proveedor no encontrado.');
-                        $cardNameInput.val('');
-                        $('#finalCardCode').val('');
-                    }
-                })
-                .fail(function (xhr, status, error) {
-                    console.error('Error al buscar proveedor:', error, xhr.responseText);
-                    alert('Hubo un error de conexión al buscar el proveedor.');
                 });
         });
 
@@ -260,7 +259,14 @@
                 alert('La cantidad debe ser mayor que cero.');
                 return;
             }
-
+            if($stockInput.val() && parseInt($quantityInput.val()) > parseInt($stockInput.val())) {
+                alert('La cantidad solicitada excede el stock disponible.');
+                return;
+            }
+            if($stockInput.val() <= 0){
+                alert('No hay stock disponible para este producto.');
+                return;
+            }
 
             const formData = {
                 _token: $('meta[name="csrf-token"]').attr('content'),
@@ -281,6 +287,7 @@
                         $itemNameInput.val('');
                         $quantityInput.val('');
                         $unitPriceInput.val('');
+                        $stockInput.val('');
 
                     } else {
                         alert('Error al añadir el producto al pedido: ' + (response.error_message || 'Desconocido'));
@@ -296,6 +303,8 @@
         function updateCartTable(carrito) {
             const $tableBody = $('#listaProductosPedido');
             $tableBody.empty(); // Limpiar la tabla existente
+            //limpiar la listaProductosPedido
+            $('#listaProductosPedido').empty();
             let totalGeneral = 0;
 
             if (carrito && Object.keys(carrito).length > 0) {
@@ -404,13 +413,21 @@
                 });
         });
 
+        $('#Warehouse').change(function () {
+            const selectedWarehouse = $(this).val();
+            $('[name="Warehouse"]').val(selectedWarehouse);
+        });
+        $('#CardCode').change(function () {
+            const selectedCardCode = $(this).val();
+            $('[name="CardCode"]').val(selectedCardCode);
+        });
+
         // Cargar el carrito al inicio si ya hay productos en la sesión (necesita una ruta de fetch)
-        // Ejemplo de ruta a implementar en Laravel: Route::get('/pedidos/fetch-carrito', 'PedidoController@fetchCarrito')->name('pedidos.fetchCarrito');
-        // $.get('{{ route('pedidos.fetchCarrito') }}')
-        //     .done(function(response) {
-        //         if (response.carrito) {
-        //             updateCartTable(response.carrito);
-        //         }
-        //     });
+        $.get('{{ route('pedidos.fetchCarrito') }}')
+            .done(function (response) {
+                if (response.carrito) {
+                    updateCartTable(response.carrito);
+                }
+            });
     });
 </script>
