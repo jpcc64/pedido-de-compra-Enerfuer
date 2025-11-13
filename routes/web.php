@@ -30,5 +30,6 @@ Route::post('/pedidos/add-producto', [PedidodeCompraController::class, 'addProdu
 Route::post('/pedidos/remove-producto', [PedidodeCompraController::class, 'removeProducto'])->name('pedidos.removeProducto');
 Route::post('/pedidos/update-quantity', [PedidodeCompraController::class, 'updateQuantity'])->name('pedidos.updateQuantity'); 
 Route::get('/pedidos/fetch-carrito', [PedidodeCompraController::class, 'fetchCarrito'])->name('pedidos.fetchCarrito');     
+Route::get('/pedidos/clear-carrito', [PedidodeCompraController::class, 'clearCarrito'])->name('pedidos.clearCarrito');     
 
 Route::post('/log-frontend-event', [PedidodeCompraController::class, 'logFrontendEvent'])->name('logFrontendEvent');

@@ -36,23 +36,25 @@ class PedidodeCompraController extends Controller
         $itemLines = [];
         if (isset($form['items']) && is_array($form['items'])) {
             foreach ($form['items'] as $item) {
-                array_push($itemLines, [
+                $itemLines[] = [
                     "ItemCode" => $item['ItemCode'],//código producto
-                    "Quantity" => $item['Quantity'],//cantidad
-                    "UnitPrice" => $item['UnitPrice'],//precios de coste
+                    "Quantity" => (int) $item['Quantity'],//cantidad
+                    "UnitPrice" => (float) $item['UnitPrice'],//precios de coste
                     "WarehouseCode" => $form['Warehouse']
-                ]);
+                ];
             }
         } else {
             return redirect()->back()->with('error', 'No hay productos en el pedido.');
+        }
+        if (empty($form['CardCode']) || empty($form['Warehouse'])) {
+            return redirect()->back()->with('error', 'El código de proveedor y el almacén son obligatorios.');
         }
         $data = [
             "CardCode" => $form['CardCode'],//proveedor
             "U_H8_SYNCHRO" => "S",//si=S  no=N
             "DocumentLines" => $itemLines
         ];
-
-        $response = $this->API_call($accion, $data);
+        $response = true ; //$this->API_call($accion, $data); ;
 
         if (isset($response['error'])) {
             Log::channel('purchase_orders')->error('Error al crear el pedido de compra', ['error' => $response['error'], 'data' => $data]);
@@ -192,6 +194,13 @@ class PedidodeCompraController extends Controller
         ]);
     }
 
+    public function clearCarrito(Request $request)
+    {
+        $request->session()->forget('carrito.items');
+        Log::channel('purchase_orders')->info('Carrito limpiado');
+
+        return response()->json(['success' => true]);
+    }
     public function logFrontendEvent(Request $request)
     {
         $message = $request->input('message');
