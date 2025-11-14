@@ -1,6 +1,5 @@
-
 @if (Auth::check())
-@include('formPrincipal')
+    @include('formPrincipal')
 @else
-@include('login')
+    @include('login')
 @endif
