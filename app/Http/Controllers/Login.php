@@ -10,16 +10,28 @@ class Login extends Controller
 {
     public function login(Request $request)
     {
-        $credentials = $request->only('username', 'password');
+        $username = $request->input('username');
+        $password = $request->input('password');
+
+        $terminal_requerida = $request->input('terminal');
+
+        if ($username === 'admin') {
+            $terminal_requerida = 'admin';
+        }
+
+        $credentials = [
+            'username' => $username,
+            'password' => $password,
+            'terminal' => $terminal_requerida,
+        ];
 
         // Auth::attempt() se encarga de todo
         if (Auth::attempt($credentials)) {
-            // AccionUsuarioRegistrada::dispatch(Auth::user(), 'Inicio de sesión');
+            AccionUsuarioRegistrada::dispatch(Auth::user(), 'Inicio de sesión');
             $request->session()->regenerate(); // Protege contra session fixation
             return redirect('/');
         }
-
-        return back()->with('error', 'Credenciales incorrectas');
+        return redirect('/login')->with('error', 'Credenciales inválidas');
     }
 
     public function logout(Request $request)
