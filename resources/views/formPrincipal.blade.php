@@ -7,9 +7,13 @@
                 <div class="layout-content-container flex flex-col max-w-[960px] flex-1">
                     <div class="flex flex-wrap justify-between gap-3 p-4">
                         <div class="flex min-w-72 flex-col gap-3">
-                            <p
-                                class="text-gray-800 dark:text-white text-4xl font-black leading-tight tracking-[-0.033em]">
-                                Crear Nuevo Pedido de Compra</p>
+                            <div class="flex items-center gap-4">
+                                <p class="text-gray-800 dark:text-white text-4xl font-black leading-tight tracking-[-0.033em]">
+                                    Crear Nuevo Pedido de Compra
+                                </p>
+                                <img src="{{ asset('storage/Logo_elec_euro_R.png') }}" alt="Logo"
+                                    class="h-16">
+                            </div>
                             <p class="text-gray-500 dark:text-gray-400 text-base font-normal leading-normal">Rellene los
                                 detalles del producto y del proveedor para crear un nuevo pedido de compra.</p>
                         </div>
@@ -230,7 +234,7 @@
                         // Rellenar campos del producto
                         $itemNameInput.val(product.ItemName || '');
                         // Asigna AvgStdPrice como precio unitario si está disponible
-                        $unitPriceInput.val(parseFloat(product.AvgStdPrice/0.97 || 0).toFixed(2)); // se hace entre 0.97 para quitar el 3% de margen
+                        $unitPriceInput.val(parseFloat(product.AvgStdPrice / 0.97 || 0).toFixed(2)); // se hace entre 0.97 para quitar el 3% de margen
                         $quantityInput.val('1'); // Pone 1 por defecto al buscar
                     } else {
                         alert('Producto no encontrado.');
