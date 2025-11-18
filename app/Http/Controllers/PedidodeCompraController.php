@@ -54,7 +54,7 @@ class PedidodeCompraController extends Controller
             "U_H8_SYNCHRO" => "S",//si=S  no=N
             "DocumentLines" => $itemLines
         ];
-        $response = true ; //$this->API_call($accion, $data); ;
+        $response = $this->API_call($accion, $data);
 
         if (isset($response['error'])) {
             Log::channel('purchase_orders')->error('Error al crear el pedido de compra', ['error' => $response['error'], 'data' => $data]);

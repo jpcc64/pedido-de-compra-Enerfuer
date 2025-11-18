@@ -8,11 +8,11 @@
                     <div class="flex flex-wrap justify-between gap-3 p-4">
                         <div class="flex min-w-72 flex-col gap-3">
                             <div class="flex items-center gap-4">
-                                <p class="text-gray-800 dark:text-white text-4xl font-black leading-tight tracking-[-0.033em]">
+                                <p
+                                    class="text-gray-800 dark:text-white text-4xl font-black leading-tight tracking-[-0.033em]">
                                     Crear Nuevo Pedido de Compra
                                 </p>
-                                <img src="{{ asset('storage/Logo_elec_euro_R.png') }}" alt="Logo"
-                                    class="h-16">
+                                <img src="{{ asset('storage/logo_bigmat-ideal.jpg') }}" alt="Logo" class="h-16">
                             </div>
                             <p class="text-gray-500 dark:text-gray-400 text-base font-normal leading-normal">Rellene los
                                 detalles del producto y del proveedor para crear un nuevo pedido de compra.</p>
@@ -48,12 +48,14 @@
                                 <label class="flex flex-col w-full">
                                     <p class="text-gray-800 dark:text-gray-300 text-base font-medium leading-normal">
                                         Nombre de Proveedor</p>
-                                    <select id="CardCode"
+                                    <p class="form-input mt-2 flex w-full min-w-0 flex-1 resize-none overflow-hidden rounded-lg text-gray-800 dark:text-white focus:outline-0 focus:ring-2 focus:ring-primary/50 border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 focus:border-primary h-12 placeholder:text-gray-400 dark:placeholder-gray-500 p-3 text-base font-normal leading-normal">
+                                        Prefabricados Nortysur</p>
+                                    {{-- <select id="CardCode" @readonly(true)
                                         class="form-input mt-2 flex w-full min-w-0 flex-1 resize-none overflow-hidden rounded-lg text-gray-800 dark:text-white focus:outline-0 focus:ring-2 focus:ring-primary/50 border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 focus:border-primary h-12 placeholder:text-gray-400 dark:placeholder-gray-500 p-3 text-base font-normal leading-normal">
                                         <!-- <option value="">Seleccione un proveedor</option> -->
                                         <option value="P0000690">Prefabricados Nortysur</option>
                                         <!-- <option value="P0000691">Enerfuer</option> -->
-                                    </select>
+                                    </select> --}}
                                     <p
                                         class="text-gray-800 dark:text-gray-300 text-base font-medium leading-normal mt-3">
                                         Nombre de Almacén</p>
@@ -62,9 +64,11 @@
                                         <option value="">Seleccione un almacén</option>
                                         <option value="12">Almacen 12</option>
                                         <option value="14">Almacen 14</option>
-                                        <option value="07">Almacen 07</option>
-                                        <option value="28">Almacen 28</option>
+                                        <option value="02">Almacen 02</option>
+                                        <option value="11">Almacen 11</option>
+                                        <option value="24">Almacen 24</option>
                                         <option value="25">Almacen 25</option>
+                                        <option value="28">Almacen 28</option>
                                     </select>
 
                                 </label>
@@ -118,7 +122,7 @@
                                             <input name="UnitPrice" type="number" min="0" id="UnitPrice"
                                                 class="form-input w-full min-w-0 resize-none overflow-hidden rounded-lg text-gray-800 dark:text-white focus:outline-0 focus:ring-2 focus:ring-primary/50 border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 focus:border-primary h-12 placeholder:text-gray-400 dark:placeholder-gray-500 p-3 text-base font-normal leading-normal"
                                                 placeholder="Precio en €"
-                                                value="{{ isset($productos['AvgStdPrice']) ? ($productos['AvgStdPrice'] / 0.97) : '' }}" />
+                                                value="{{ isset($productos['AvgStdPrice']) ? $productos['AvgStdPrice'] / 0.97 : '' }}" />
                                         </label>
                                     </div>
                                 </form>
@@ -139,8 +143,8 @@
                             class="overflow-x-auto rounded-lg border border-gray-200 dark:border-gray-700 bg-white dark:bg-background-dark">
                             <form action="{{ route('crearPedido') }}" method="POST">
                                 @csrf
-                                <input type="hidden" name="CardCode" id="finalCardCode">
-                                <input type="hidden" name="Warehouse" id="finalCardCode" value="">
+                                <input type="hidden" name="CardCode" id="finalCardCode" value="P0000690">
+                                <input type="hidden" name="Warehouse" id="finalWarehouse" value="">
                                 <table class="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
                                     <thead class="bg-gray-50 dark:bg-gray-800">
                                         <tr>
@@ -207,7 +211,7 @@
         });
     }
 
-    $(document).ready(function () {
+    $(document).ready(function() {
         // Asignar IDs a los inputs de producto para una referencia más clara
         const $itemCodeInput = $('input[name="ItemCode"]');
         const $itemNameInput = $('input[name="ItemName"]');
@@ -215,44 +219,58 @@
         const $unitPriceInput = $('input[name="UnitPrice"]');
         const $cardCodeInput = $('input[name="CardCode"]');
         const $cardNameInput = $('input[name="CardName"]');
+        const $warehouseInput = $('input[name="Warehouse"]');
         // Búsqueda de productos
-        $('#buscarProducto').click(function (e) {
+        $('#buscarProducto').click(function(e) {
             e.preventDefault();
             const itemCode = $itemCodeInput.val();
-            logEvent('Búsqueda de producto iniciada', { itemCode: itemCode });
+            logEvent('Búsqueda de producto iniciada', {
+                itemCode: itemCode
+            });
             if (!itemCode) {
                 alert('Por favor, ingrese un Código de Producto.');
                 return;
             }
 
-            $.get('{{ route('consultaProducto') }}', { ItemCode: itemCode })
-                .done(function (response) {
+            $.get('{{ route('consultaProducto') }}', {
+                    ItemCode: itemCode
+                })
+                .done(function(response) {
                     if (response.productos) {
                         const product = response.productos;
                         console.log('Producto encontrado:', product);
-                        logEvent('Producto encontrado', { itemCode: itemCode, product: product });
+                        logEvent('Producto encontrado', {
+                            itemCode: itemCode,
+                            product: product
+                        });
                         // Rellenar campos del producto
                         $itemNameInput.val(product.ItemName || '');
                         // Asigna AvgStdPrice como precio unitario si está disponible
-                        $unitPriceInput.val(parseFloat(product.AvgStdPrice / 0.97 || 0).toFixed(2)); // se hace entre 0.97 para quitar el 3% de margen
+                        $unitPriceInput.val(parseFloat(product.AvgStdPrice / 0.97 || 0).toFixed(
+                        2)); // se hace entre 0.97 para quitar el 3% de margen
                         $quantityInput.val('1'); // Pone 1 por defecto al buscar
                     } else {
                         alert('Producto no encontrado.');
-                        logEvent('Producto no encontrado', { itemCode: itemCode });
+                        logEvent('Producto no encontrado', {
+                            itemCode: itemCode
+                        });
                         $itemNameInput.val('');
                         $unitPriceInput.val('0.00');
                         $quantityInput.val('1');
                     }
                 })
-                .fail(function (xhr, status, error) {
+                .fail(function(xhr, status, error) {
                     console.error('Error al buscar producto:', error, xhr.responseText);
-                    logEvent('Error al buscar producto', { itemCode: itemCode, error: error });
+                    logEvent('Error al buscar producto', {
+                        itemCode: itemCode,
+                        error: error
+                    });
                     alert('Hubo un error de conexión al buscar el producto.');
                 });
         });
 
         // Añadir producto al pedido (Carrito)
-        $('#subirProducto').click(function (e) {
+        $('#subirProducto').click(function(e) {
             e.preventDefault();
 
             // Validación básica
@@ -260,7 +278,12 @@
                 alert('Debe buscar y seleccionar un Proveedor primero.');
                 return;
             }
-            if (!$itemCodeInput.val() || !$itemNameInput.val() || !$quantityInput.val() || !$unitPriceInput.val()) {
+            if (!$warehouseInput.val() || !$('#finalWarehouse').val()) {
+                alert('Debe buscar y seleccionar un Almacén primero.');
+                return;
+            }
+            if (!$itemCodeInput.val() || !$itemNameInput.val() || !$quantityInput.val() || !
+                $unitPriceInput.val()) {
                 alert('Debe buscar un Producto y especificar la Cantidad y el Precio Unitario.');
                 return;
             }
@@ -276,10 +299,12 @@
                 Quantity: $quantityInput.val(),
                 UnitPrice: $unitPriceInput.val()
             };
-            logEvent('Añadir producto al pedido', { product: formData });
+            logEvent('Añadir producto al pedido', {
+                product: formData
+            });
 
             $.post('{{ route('pedidos.addProducto') }}', formData)
-                .done(function (response) {
+                .done(function(response) {
                     if (response.success && response.carrito) {
 
                         alert('Producto añadido al pedido correctamente.');
@@ -292,10 +317,11 @@
                         $unitPriceInput.val('');
 
                     } else {
-                        alert('Error al añadir el producto al pedido: ' + (response.error_message || 'Desconocido'));
+                        alert('Error al añadir el producto al pedido: ' + (response.error_message ||
+                            'Desconocido'));
                     }
                 })
-                .fail(function (xhr, status, error) {
+                .fail(function(xhr, status, error) {
                     console.error('Error en la petición AJAX:', error, xhr.responseText);
                     alert('Hubo un error de conexión al añadir el producto. Consulta la consola.');
                 });
@@ -313,7 +339,7 @@
                 // El carrito debe ser un objeto o array de productos. Usaremos Object.values() si es un objeto.
                 const productosArray = Array.isArray(carrito) ? carrito : Object.values(carrito);
 
-                productosArray.forEach(function (item) {
+                productosArray.forEach(function(item) {
                     const quantity = parseFloat(item.Quantity);
                     const unitPrice = parseFloat(item.UnitPrice);
                     const currentSubtotal = (quantity * unitPrice).toFixed(2);
@@ -353,7 +379,9 @@
                 });
             } else {
                 // Mostrar mensaje de carrito vacío si es necesario
-                $tableBody.html('<tr><td colspan="6" class="px-6 py-4 text-center text-gray-500 dark:text-gray-400">No hay productos en el pedido.</td></tr>');
+                $tableBody.html(
+                    '<tr><td colspan="6" class="px-6 py-4 text-center text-gray-500 dark:text-gray-400">No hay productos en el pedido.</td></tr>'
+                    );
             }
 
             // Actualizar el total general en el footer de la tabla
@@ -361,31 +389,34 @@
         }
 
         // Delegación de evento para eliminar producto
-        $(document).on('click', '.remove-product-btn', function () {
+        $(document).on('click', '.remove-product-btn', function() {
             const itemCodeToRemove = $(this).data('item-code');
-            logEvent('Eliminar producto del pedido', { itemCode: itemCodeToRemove });
+            logEvent('Eliminar producto del pedido', {
+                itemCode: itemCodeToRemove
+            });
 
             // Petición AJAX para eliminar el producto de la sesión
             $.post('{{ route('pedidos.removeProducto') }}', {
-                _token: $('meta[name="csrf-token"]').attr('content'),
-                ItemCode: itemCodeToRemove
-            })
-                .done(function (response) {
+                    _token: $('meta[name="csrf-token"]').attr('content'),
+                    ItemCode: itemCodeToRemove
+                })
+                .done(function(response) {
                     if (response.success && response.carrito) {
                         alert('Producto eliminado del pedido.');
                         updateCartTable(response.carrito);
                     } else {
-                        alert('Error al eliminar el producto: ' + (response.error_message || 'Desconocido'));
+                        alert('Error al eliminar el producto: ' + (response.error_message ||
+                            'Desconocido'));
                     }
                 })
-                .fail(function (xhr, status, error) {
+                .fail(function(xhr, status, error) {
                     console.error('Error en la petición AJAX:', error, xhr.responseText);
                     alert('Hubo un error de conexión al eliminar el producto.');
                 });
         });
 
         // Delegación de evento para actualizar cantidad
-        $(document).on('change', '.quantity-input', function () {
+        $(document).on('change', '.quantity-input', function() {
             const $input = $(this);
             const itemCodeToUpdate = $input.data('item-code');
             const newQuantity = $input.val();
@@ -397,45 +428,49 @@
                 return;
             }
 
-            logEvent('Actualizar cantidad de producto', { itemCode: itemCodeToUpdate, newQuantity: newQuantity });
+            logEvent('Actualizar cantidad de producto', {
+                itemCode: itemCodeToUpdate,
+                newQuantity: newQuantity
+            });
             // Petición AJAX para actualizar la cantidad del producto en la sesión
             $.post('{{ route('pedidos.updateQuantity') }}', { // Necesitarás crear esta ruta
-                _token: $('meta[name="csrf-token"]').attr('content'),
-                ItemCode: itemCodeToUpdate,
-                Quantity: newQuantity
-            })
-                .done(function (response) {
+                    _token: $('meta[name="csrf-token"]').attr('content'),
+                    ItemCode: itemCodeToUpdate,
+                    Quantity: newQuantity
+                })
+                .done(function(response) {
                     if (response.success && response.carrito) {
                         updateCartTable(response.carrito);
                     } else {
-                        alert('Error al actualizar la cantidad: ' + (response.error_message || 'Desconocido'));
+                        alert('Error al actualizar la cantidad: ' + (response.error_message ||
+                            'Desconocido'));
                     }
                 })
-                .fail(function (xhr, status, error) {
+                .fail(function(xhr, status, error) {
                     console.error('Error en la petición AJAX:', error, xhr.responseText);
                     alert('Hubo un error de conexión al actualizar la cantidad.');
                 });
         });
 
-        $('#Warehouse').change(function () {
+        $('#Warehouse').change(function() {
             const selectedWarehouse = $(this).val();
             $('[name="Warehouse"]').val(selectedWarehouse);
         });
-        $('#CardCode').change(function () {
+        $('#CardCode').change(function() {
             const selectedCardCode = $(this).val();
             $('[name="CardCode"]').val(selectedCardCode);
         });
 
         // Cargar el carrito al inicio si ya hay productos en la sesión (necesita una ruta de fetch)
         $.get('{{ route('pedidos.fetchCarrito') }}')
-            .done(function (response) {
+            .done(function(response) {
                 if (response.carrito) {
                     updateCartTable(response.carrito);
                 }
             });
-        $('#crearPedidoBtn').click(function (e) {
+        $('#crearPedidoBtn').click(function(e) {
             $.get('{{ route('pedidos.clearCarrito') }}')
-                .done(function (response) {
+                .done(function(response) {
                     if (response.carrito) {
                         updateCartTable(response.carrito);
                     }
