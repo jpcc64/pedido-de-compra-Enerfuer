@@ -72,12 +72,10 @@ class PedidodeCompraController extends Controller
             "select" => "",
             "top" => 10,
         ];
-        // Utilizar los criterios de búsqueda proporcionados en el formulario
 
         $response = $this->API_call($accion, $cliente);
         $compras = $response['value'];
-        // dd($compras);
-        return view('index', ['compras' => $compras]); // Reemplazar con resultados reales
+        return view('index', ['compras' => $compras]); 
     }
 
     public function consultaProducto(Request $request)

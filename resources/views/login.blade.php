@@ -17,7 +17,7 @@
                 <button type="submit"
                     class="w-full bg-blue-500 text-white py-2 rounded hover:bg-blue-600 transition">Entrar</button>
             </div>
-            <input type="hidden" name="terminal" value="pedidocompra">
+            <input type="hidden" name="terminal" value="pedidodecompra">
 
         </form>
         @if ($errors->has('login'))
