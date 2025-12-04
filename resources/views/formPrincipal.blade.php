@@ -144,7 +144,11 @@
                             <form action="{{ route('crearPedido') }}" method="POST">
                                 @csrf
                                 <input type="hidden" name="CardCode" id="finalCardCode" value="P0000690">
+<<<<<<< HEAD
                                 <input type="hidden" name="Warehouse" id="finalWarehouse" value="">
+=======
+                                <input type="hidden" name="Warehouse" id="finalCardCode" value="">
+>>>>>>> dfd79ac (	modified:   app/Http/Controllers/PedidodeCompraController.php)
                                 <table class="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
                                     <thead class="bg-gray-50 dark:bg-gray-800">
                                         <tr>
