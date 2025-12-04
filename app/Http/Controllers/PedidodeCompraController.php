@@ -55,7 +55,7 @@ class PedidodeCompraController extends Controller
             "DocumentLines" => $itemLines
         ];
         $response = $this->API_call($accion, $data);
-
+       // dd($response);
         if (isset($response['error'])) {
             Log::channel('purchase_orders')->error('Error al crear el pedido de compra', ['error' => $response['error'], 'data' => $data]);
             return redirect()->back()->with('error', 'Error al crear el pedido de compra: ' . $response['error']);
