@@ -14,7 +14,7 @@ use App\Http\Controllers\PedidodeCompraController;
 |
 */
 
-Route::get('/', [PedidodeCompraController::class, 'index'])->name('formPrincipal');
+Route::get('/', [PedidodeCompraController::class, 'index'])->name('formPrincipal')->middleware('auth');
 Route::get('/login', function () {
     return view('login');
 });
