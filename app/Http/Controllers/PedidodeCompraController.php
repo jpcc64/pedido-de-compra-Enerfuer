@@ -40,7 +40,7 @@ class PedidodeCompraController extends Controller
                     "ItemCode" => $item['ItemCode'],//código producto
                     "Quantity" => (int) $item['Quantity'],//cantidad
                     "UnitPrice" => (float) $item['UnitPrice'],//precios de coste
-                    "WarehouseCode" => $form['Warehouse']
+                    "WarehouseCode" => $form['Warehouse'],
                 ];
             }
         } else {
@@ -51,8 +51,9 @@ class PedidodeCompraController extends Controller
         }
         $data = [
             "CardCode" => $form['CardCode'],//proveedor
-            "U_H8_SYNCHRO" => "S",//si=S  no=N
-            "DocumentLines" => $itemLines
+            "U_H8_SYNCHRO" => "N",//si=S  no=N
+            "DocumentLines" => $itemLines,
+            "Comments" => $form['Comments'] ?? '',//comentarios
         ];
         $response = $this->API_call($accion, $data);
        // dd($response);

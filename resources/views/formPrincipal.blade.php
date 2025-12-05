@@ -12,7 +12,7 @@
                                     class="text-gray-800 dark:text-white text-4xl font-black leading-tight tracking-[-0.033em]">
                                     Crear Nuevo Pedido de Compra
                                 </p>
-                                <img src="{{ asset('storage/logo_bigmat-ideal.jpg') }}" alt="Logo" class="h-16">
+                                <img src="{{ asset('storage/Logo_elec_euro_R.png') }}" alt="Logo" class="h-16">
                             </div>
                             <p class="text-gray-500 dark:text-gray-400 text-base font-normal leading-normal">Rellene los
                                 detalles del producto y del proveedor para crear un nuevo pedido de compra.</p>
@@ -49,7 +49,7 @@
                                     <p class="text-gray-800 dark:text-gray-300 text-base font-medium leading-normal">
                                         Nombre de Proveedor</p>
                                     <p class="form-input mt-2 flex w-full min-w-0 flex-1 resize-none overflow-hidden rounded-lg text-gray-800 dark:text-white focus:outline-0 focus:ring-2 focus:ring-primary/50 border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 focus:border-primary h-12 placeholder:text-gray-400 dark:placeholder-gray-500 p-3 text-base font-normal leading-normal">
-                                        Prefabricados Nortysur</p>
+                                        Enerfuer SL</p>
                                     {{-- <select id="CardCode" @readonly(true)
                                         class="form-input mt-2 flex w-full min-w-0 flex-1 resize-none overflow-hidden rounded-lg text-gray-800 dark:text-white focus:outline-0 focus:ring-2 focus:ring-primary/50 border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 focus:border-primary h-12 placeholder:text-gray-400 dark:placeholder-gray-500 p-3 text-base font-normal leading-normal">
                                         <!-- <option value="">Seleccione un proveedor</option> -->
@@ -72,7 +72,12 @@
                                     </select>
 
                                 </label>
-
+                                <label for="Comments">
+                                    <p>Comentario</p>
+                                    <input type="text" id="Comments"
+                                        class="form-input mt-2 flex w-full min-w-0 flex-1 resize-none overflow-hidden rounded-lg text-gray-800 dark:text-white focus:outline-0 focus:ring-2 focus:ring-primary/50 border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 focus:border-primary h-12 placeholder:text-gray-400 dark:placeholder-gray-500 p-3 text-base font-normal leading-normal"
+                                        placeholder="Comentarios adicionales (opcional)" />
+                                </label>
                             </div>
                         </div>
                         <div
@@ -143,8 +148,9 @@
                             class="overflow-x-auto rounded-lg border border-gray-200 dark:border-gray-700 bg-white dark:bg-background-dark">
                             <form action="{{ route('crearPedido') }}" method="POST">
                                 @csrf
-                                <input type="hidden" name="CardCode" id="finalCardCode" value="P0000690">
+                                <input type="hidden" name="CardCode" id="finalCardCode" value="P0000691">
                                 <input type="hidden" name="Warehouse" id="finalWarehouse" value="">
+                                <input type="hidden" name="Comments" id="finalComments" value="">
                                 <table class="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
                                     <thead class="bg-gray-50 dark:bg-gray-800">
                                         <tr>
@@ -460,6 +466,11 @@
             const selectedCardCode = $(this).val();
             $('[name="CardCode"]').val(selectedCardCode);
         });
+        $('#Comments').change(function() {
+            const selectedComments = $(this).val();
+            $('[name="Comments"]').val(selectedComments);
+        });
+
 
         // Cargar el carrito al inicio si ya hay productos en la sesión (necesita una ruta de fetch)
         $.get('{{ route('pedidos.fetchCarrito') }}')
