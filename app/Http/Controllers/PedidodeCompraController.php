@@ -41,6 +41,7 @@ class PedidodeCompraController extends Controller
                     "Quantity" => (int) $item['Quantity'],//cantidad
                     "UnitPrice" => (float) $item['UnitPrice'],//precios de coste
                     "WarehouseCode" => $form['Warehouse'],
+                    "VatGroup" => "S00" //tipo de impuesto S00=sin iva
                 ];
             }
         } else {
@@ -51,18 +52,17 @@ class PedidodeCompraController extends Controller
         }
         $data = [
             "CardCode" => $form['CardCode'],//proveedor
-            "U_H8_SYNCHRO" => "N",//si=S  no=N
-            "DocumentLines" => $itemLines,
+            "U_H8_SYNCHRO" => "S",//si = S  no = N
+            "DocumentLines" => $itemLines, //productos
             "Comments" => $form['Comments'] ?? '',//comentarios
         ];
         $response = $this->API_call($accion, $data);
-       // dd($response);
         if (isset($response['error'])) {
             Log::channel('purchase_orders')->error('Error al crear el pedido de compra', ['error' => $response['error'], 'data' => $data]);
             return redirect()->back()->with('error', 'Error al crear el pedido de compra: ' . $response['error']);
         }
         Log::channel('purchase_orders')->info('Pedido de compra creado exitosamente', ['response' => $response, 'data' => $data]);
-        return redirect()->back()->with('success', 'Pedido de compra creado exitosamente.');
+        return redirect()->back()->with('success', 'Pedido de compra creado exitosamente. Con número: ' . $response['DocNum']);
     }
 
     public function consultaCompra(Request $request)
